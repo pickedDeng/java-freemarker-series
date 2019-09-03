@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>审批</title>
+    <script>
+        (function (designWidth, maxWidth) {
+            var doc = document,
+                win = window,
+                docEl = doc.documentElement,
+                remStyle = document.createElement("style"),
+                tid;
+
+            function refreshRem() {
+                var width = docEl.getBoundingClientRect().width;
+                maxWidth = maxWidth || 540;
+                width > maxWidth && (width = maxWidth);
+                var rem = width * 100 / designWidth;
+                remStyle.innerHTML = 'html{font-size:' + rem + 'px;}';
+            }
+
+            if (docEl.firstElementChild) {
+                docEl.firstElementChild.appendChild(remStyle);
+            } else {
+                var wrap = doc.createElement("div");
+                wrap.appendChild(remStyle);
+                doc.write(wrap.innerHTML);
+                wrap = null;
+            }
+            refreshRem();
+
+            win.addEventListener("resize", function () {
+                clearTimeout(tid); 
+                tid = setTimeout(refreshRem, 300);
+            }, false);
+
+            win.addEventListener("pageshow", function (e) {
+                if (e.persisted) { 
+                    clearTimeout(tid);
+                    tid = setTimeout(refreshRem, 300);
+                }
+            }, false);
+
+            if (doc.readyState === "complete") {
+                doc.body.style.fontSize = "16px";
+            } else {
+                doc.addEventListener("DOMContentLoaded", function (e) {
+                    doc.body.style.fontSize = "16px";
+                }, false);
+            }
+        })(750, 750);
+    </script>
+    <script src="./vue.min.js"></script>
+    <link rel="stylesheet" href="./iconfont/iconfont.css">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            
+        }
+        
+        ul{
+            list-style: none;
+        }
+        a{
+            text-decoration: none;
+        }
+        .jghead{
+            height: 1.4rem;
+            border-bottom: 1px solid #eee;
+            padding: 0.2rem 0.4rem 0.2rem;
+            display: flex;
+            width: 7.5rem;
+            align-items: center;
+            margin: auto;
+            background: #fff;
+            box-sizing: border-box;
+        }
+        .bot{
+            height: 1.4rem;
+            padding: 0.2rem 0.1rem 0rem;
+            display: flex;
+            width: 6.5rem;
+            align-items: center;
+            margin: auto;
+            justify-content: left;
+        }
+        .bot p{
+            padding-left: 0.15rem;
+        }
+        .personpic{
+            width: 1rem;
+            height: 1rem;
+            background-color: #3296fb;
+            font-size: 0.14rem;
+            text-align: center;
+            line-height: 1rem;
+            color: #fff;
+            border-radius: 50%;
+            position: relative;
+            z-index: 10;
+        }
+        .jghead  p{
+            padding-left: 0.15rem;
+        }
+        .name{
+            color: #333;
+            font-size: 0.30rem;
+            margin-top: 0.05rem;
+        }
+        .status{
+            color: #666;
+            font-size: 0.20rem;
+            margin-top: 0.08rem;
+        }
+        .content{
+            display: flex;
+            flex-wrap: nowrap;
+            width: 7.5rem;
+            padding: 0.2rem 0.4rem 0.2rem;
+            box-sizing: border-box;
+            background: #fff;
+            margin:0.2rem auto;
+        }
+        .content p {
+            margin: 0.05rem 0;
+            
+        }
+        .conleft{
+            text-align: right;
+            color: #777;
+            margin: 0 0.1rem;
+            flex: 3;
+            min-width: 2rem;
+        }
+        .conright{
+            flex: 5;
+        }
+        .conleft p{
+            font-size: 14px;
+            padding: 0.1rem 0;
+            box-sizing: border-box;
+        }
+        .conright p {
+            box-sizing: border-box;
+            padding: 0.1rem 0 0.1rem 0.15rem;
+            color: #333;
+            font-size: 14px;
+            width: 5.1rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        .jug{
+            font-size: 14px;
+            color: #666;
+            margin-top: 0.15rem;
+            text-align: right;
+            margin-right: 0.4rem;
+        }
+        .time{
+            font-size: 0.14rem;
+            color: #666;
+            align-self: flex-end;
+            margin-bottom: 0.3rem;
+        }
+        .adv{
+            font-size: 0.14rem;
+            color: #666;
+            display: inline-block;
+            width: 2.8rem;
+            white-space: wrap;
+            overflow-y: auto;
+            height: 0.9rem;
+            display: flex;
+            align-items: center;
+            padding-left: 0.1rem;
+        }
+        .msg{
+            min-width: 1.5rem;
+        }
+        .red{
+            color: red;
+        }
+        .fujian{
+            overflow: hidden;
+            text-align: center;
+            display: none;
+        }
+        .fujian .sucai{
+            width: 6rem;
+            display: inline-block;
+            height: auto;
+            margin: auto;
+        }
+        .showIt{
+            display: block;
+        }
+        .msgcontent{
+            width: 7.5rem;
+            padding: 0.1rem 0.15rem;
+            box-sizing: border-box;
+            margin: auto;
+            overflow-y: auto;
+            height: 4rem;
+            display: none;
+            color: #333;
+        }
+        .showCon{
+            display: block;
+        }
+        .bottom{
+            position: relative;
+            background-color: #fff;
+            margin: 0.2rem 0;
+        }
+        .line{
+            width: 0.1rem;
+            background-color: #ccc;
+            height: 80%;
+            position: absolute;
+            left: 0.95rem;
+            top: 10%;
+        }
+        #app .detail{
+            color: red;
+        }
+        body{
+            background-color: #f8f8f8;
+        }
+    </style>
+</head>
+<body class="examBody">
+    <div id="app">
+            <div class="jghead">
+                    <div class="personpic">${source.editorName!}</div>
+                    <div>
+                        <p class="name">${source.editorName!}</p>
+                        <p class="status">${source.freeSeries!}</p>
+                    </div>
+                </div>
+            
+                <div class="content">
+                    <div class="conleft">
+                        <p>串联单标题</p>
+                        <p>串联单栏目</p>
+                        <p>拟播出时间</p>
+                        <p>串联单内容</p>
+                        <p>审核人流程</p>
+                    </div>
+                    <div class="conright">
+                        <p>${source.title!}</p>
+                        <#if (source.columnName?length gt 1) >
+                            <p>${source.columnName! }</p>
+						<#else>
+							<p>暂无</p>
+						</#if> 
+                        
+                        <#if (source.articleids?length gt 1) >
+							<p>${source.articleids! }</p>
+						<#else>
+							<p>暂无</p>
+						</#if> 
+                        <p @click="lookDetail" class="detail">详细内容 <span class="icon-xiangshang iconfont" v-if="showFlag1"></span> <span class="icon-icon_on_the_down iconfont" v-if="!showFlag1"></span></p>
+                        <#if (source.auditOpition?length gt 1) >
+							<p>${source.auditOpition! }</p>
+						<#else>
+							<p>暂无</p>
+						</#if> 
+                    </div>
+                    
+                </div>
+                <!-- 稿件内容 -->
+                <div :class="{msgcontent:true,showCon:showFlag1}" >
+                    ${source.content!}
+                </div>
+                
+                <div class="bottom">
+                    <div class="line"></div>
+                    <!-- 提交审核 -->
+                    <#if (record?size gt 0)> 
+                        <#list record as item>
+                            <div class="bot">
+                            <div class="personpic">${item.editorName!}</div>
+                            <div class="msg">
+                                <p class="name">${item.isEditor!}</p>
+                                <p class="status">${item.editorName!}</p>
+                            </div>
+                            <#if item.grade?contains("mp3") >
+                            <div class="adv icon-laba iconfont" @click="playAudio(${item_index})">
+                                    <audio id="myaudio${item_index}" src="${item.grade!}"></audio>
+                                    ${item.operation}
+                            </div>
+                            <#else>
+                            <div class="adv">
+                                    ${item.operation}
+                            </div>
+                            </#if>
+                            
+                            <div class="time">${item.numGrade!}</div>
+                        </div>
+                        </#list>
+                    <#else>
+                    <div class="bot">
+                        <p>串联单未审核，暂无审核记录</p>
+                    </div>
+                    </#if>
+                </div>   
+                
+    </div>
+</body>
+<script src="./exam.js"></script>
+</html>
